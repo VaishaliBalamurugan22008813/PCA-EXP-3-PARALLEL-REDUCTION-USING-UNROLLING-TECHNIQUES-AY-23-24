@@ -1,10 +1,9 @@
-# PCA-EXP-3-PARALLEL-REDUCTION-USING-UNROLLING-TECHNIQUES AY 23-24
-<h3>AIM:To implement the kernel reduceUnrolling16 and comapare the performance of kernal reduceUnrolling16 with kernal reduceUnrolling8 using nvprof.</h3>
-<h3>VAISHALI BALAMURUGAN</h3>
-<h3>212222230164</h3>
-<h3>3</h3>
-<h3>3.04.2024</h3>
-<h1> <align=center> PARALLEL REDUCTION USING UNROLLING TECHNIQUES </h3>
+<H1 ALIGN=CENTER> PARALLEL REDUCTION USING UNROLLING TECHNIQUES </H1>
+<H3> NAME : VAISHALI BALAMURUGAN</H3>
+<H3> REGISTER NUMBER : 212222230164</H3>
+<H3>EXPERIMENT NO : 03 </H3>
+<H3>DATE  : 03.04.2024 </H3>
+<h2> <align=center> PARALLEL REDUCTION USING UNROLLING TECHNIQUES </h2>
   Refer to the kernel reduceUnrolling8 and implement the kernel reduceUnrolling16, in which each thread handles 16 data blocks. Compare kernel performance with reduceUnrolling8 and use the proper metrics and events with nvprof to explain any difference in performance.</h3>
 
 ## AIM:
@@ -50,9 +49,8 @@ Memory Deallocation
 28.	Return from the main function.
 
 ## PROGRAM:
-!pip install git+https://github.com/andreinechaev/nvcc4jupyter.git
-%load_ext nvcc4jupyter
-
+### UNROLLING 8:
+```
 %%cuda
 #include <stdio.h>
 #include <cuda_runtime.h>
@@ -67,7 +65,7 @@ Memory Deallocation
     const cudaError_t error = call;                                            \
     if (error != cudaSuccess)                                                  \
     {                                                                          \
-        fprintf(stderr, "Error: %s:%d, ", __FILE__, __LINE__);                 \
+        fprintf(stderr, "Error: %s:%d, ", _FILE, __LINE_);                 \
         fprintf(stderr, "code: %d, reason: %s\n", error,                       \
                 cudaGetErrorString(error));                                    \
         exit(1);                                                               \
@@ -79,8 +77,8 @@ Memory Deallocation
     cublasStatus_t err;                                                        \
     if ((err = (call)) != CUBLAS_STATUS_SUCCESS)                               \
     {                                                                          \
-        fprintf(stderr, "Got CUBLAS error %d at %s:%d\n", err, __FILE__,       \
-                __LINE__);                                                     \
+        fprintf(stderr, "Got CUBLAS error %d at %s:%d\n", err, _FILE_,       \
+                _LINE_);                                                     \
         exit(1);                                                               \
     }                                                                          \
 }
@@ -90,8 +88,8 @@ Memory Deallocation
     curandStatus_t err;                                                        \
     if ((err = (call)) != CURAND_STATUS_SUCCESS)                               \
     {                                                                          \
-        fprintf(stderr, "Got CURAND error %d at %s:%d\n", err, __FILE__,       \
-                __LINE__);                                                     \
+        fprintf(stderr, "Got CURAND error %d at %s:%d\n", err, _FILE_,       \
+                _LINE_);                                                     \
         exit(1);                                                               \
     }                                                                          \
 }
@@ -101,8 +99,8 @@ Memory Deallocation
     cufftResult err;                                                           \
     if ( (err = (call)) != CUFFT_SUCCESS)                                      \
     {                                                                          \
-        fprintf(stderr, "Got CUFFT error %d at %s:%d\n", err, __FILE__,        \
-                __LINE__);                                                     \
+        fprintf(stderr, "Got CUFFT error %d at %s:%d\n", err, _FILE_,        \
+                _LINE_);                                                     \
         exit(1);                                                               \
     }                                                                          \
 }
@@ -112,7 +110,7 @@ Memory Deallocation
     cusparseStatus_t err;                                                      \
     if ((err = (call)) != CUSPARSE_STATUS_SUCCESS)                             \
     {                                                                          \
-        fprintf(stderr, "Got error %d at %s:%d\n", err, __FILE__, __LINE__);   \
+        fprintf(stderr, "Got error %d at %s:%d\n", err, _FILE, __LINE_);   \
         cudaError_t cuda_err = cudaGetLastError();                             \
         if (cuda_err != cudaSuccess)                                           \
         {                                                                      \
@@ -145,7 +143,7 @@ inline double seconds()
 
 
 
-__global__ void reduceUnrolling8 (int *g_idata, int *g_odata, unsigned int n)
+_global_ void reduceUnrolling8 (int *g_idata, int *g_odata, unsigned int n)
 {
     // set thread ID
     unsigned int tid = threadIdx.x;
@@ -196,7 +194,7 @@ __global__ void reduceUnrolling8 (int *g_idata, int *g_odata, unsigned int n)
     if (tid == 0) g_odata[blockIdx.x] = idata[0];
 }
 
-__global__ void reduceUnrolling16 (int *g_idata, int *g_odata, unsigned int n)
+_global_ void reduceUnrolling16 (int *g_idata, int *g_odata, unsigned int n)
 {
     // set thread ID
     unsigned int tid = threadIdx.x;
@@ -376,9 +374,11 @@ int main(int argc, char **argv)
 
     return EXIT_SUCCESS;
 }
-
-
+```
 ## OUTPUT:
- 
+### UNROLLING 8:
+![image](https://github.com/Shrruthilaya-Gangadaran/PCA-EXP-3-PARALLEL-REDUCTION-USING-UNROLLING-TECHNIQUES-AY-23-24/assets/93427705/350cbed4-720e-4845-8964-64373d9bde03)
+### UNROLLING 16:
+![image](https://github.com/Shrruthilaya-Gangadaran/PCA-EXP-3-PARALLEL-REDUCTION-USING-UNROLLING-TECHNIQUES-AY-23-24/assets/93427705/07a1f425-a560-479e-a1ef-3db83e844349)
 ## RESULT:
-Thus the program has been executed by unrolling by 8 and unrolling by 16. It is observed that _________ has executed with less elapsed time than _____________ with blocks_____,______.
+Thus, the program has been executed by unrolling by 8 and unrolling by 16. It is observed that 16 has executed with less elapsed time than 8 with blocks 2.70 ms, 3.34 ms.
